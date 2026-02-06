@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(-45deg, #ff758c, #ff7eb3, #6a11cb, #2575fc);
+  background-size: 400% 400%;
+  animation: bgMove 12s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  transition: background 0.5s;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* WARNING MODE */
+body.warning {
+  background: radial-gradient(circle, #7a0000, #120000);
+  animation: shake 0.35s infinite;
+}
+
+@keyframes shake {
+  0% { transform: translate(0); }
+  25% { transform: translate(-3px, 2px); }
+  50% { transform: translate(3px, -2px); }
+  75% { transform: translate(-2px, 3px); }
+  100% { transform: translate(0); }
+}
+
+.container {
+  max-width: 90%;
+  padding: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+h1 {
+  font-size: clamp(2rem, 6vw, 4rem);
+}
+
+p {
+  font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+  margin: 15px 0;
+}
+
+button {
+  padding: 12px 28px;
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  border: none;
+  border-radius: 30px;
+  background: white;
+  color: #ff4d6d;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 10px;
+}
+
+button:hover {
+  transform: scale(1.08);
+}
+
+.heart {
+  font-size: clamp(3rem, 10vw, 6rem);
+  animation: bounce 1.5s infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes bounce {
+  50% { transform: translateY(-20px); }
+}
+
+/* CRACK SPLIT + RED PULSE */
+.crack {
+  position: fixed;
+  top: 0;
+  width: 4px;
+  height: 100vh;
+  background: linear-gradient(to bottom, #fff, #ff0000);
+  box-shadow: 0 0 25px rgba(255,0,0,0.9);
+  animation: pulse 0.8s infinite;
+}
+
+.crack.left {
+  left: 50%;
+  animation: splitLeft 0.7s forwards, pulse 0.8s infinite;
+}
+
+.crack.right {
+  left: 50%;
+  animation: splitRight 0.7s forwards, pulse 0.8s infinite;
+}
+
+@keyframes splitLeft {
+  to { transform: translateX(-120px) rotate(-2deg); }
+}
+
+@keyframes splitRight {
+  to { transform: translateX(120px) rotate(2deg); }
+}
+
+@keyframes pulse {
+  50% { box-shadow: 0 0 40px rgba(255,0,0,1); }
+}
+
+iframe {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="app">
+  <div class="heart">❤️</div>
+  <h1>Hey love 💖</h1>
+  <p>I made something just for you…</p>
+  <button onclick="next()">Click me 😏</button>
+</div>
+
+<iframe
+  id="music"
+  src="https://www.youtube.com/embed/ShASaB9Zmn4?start=17&autoplay=1&loop=1&playlist=ShASaB9Zmn4"
+  allow="autoplay">
+</iframe>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+let step = 0;
+
+function next() {
+  step++;
+  const app = document.getElementById("app");
+
+  if (step === 1)
+    app.innerHTML = `<p>With you, life feels like there’s always more to explore, gently wrapped in mystery.</p><button onclick="next()">Next 💫</button>`;
+  else if (step === 2)
+    app.innerHTML = `<p>You have been my headache from the day I met you, but this headache I would love to keep for eternity.</p><button onclick="next()">Next 🧸</button>`;
+  else if (step === 3)
+    app.innerHTML = `<p>Well obviously, you are my favorite person. Also, don’t tell anyone — I AM BATMAN 🦇</p><button onclick="next()">Next 😌</button>`;
+  else if (step === 4)
+    showValentine();
+}
+
+function showValentine() {
+  clearWarning();
+  document.getElementById("app").innerHTML = `
+    <h1><s>Will</s> You be my Valentine? 💌</h1>
+    <button onclick="final()">YES 😍</button>
+    <button onclick="nope()">NO 😈</button>`;
+}
+
+function crackSound() {
+  const ctx = new AudioContext();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = "sawtooth";
+  o.frequency.value = 120;
+  g.gain.value = 0.5;
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); o.stop(ctx.currentTime + 0.25);
+}
+
+function nope() {
+  document.body.classList.add("warning");
+  crackSound();
+
+  ["left","right"].forEach(side => {
+    const c = document.createElement("div");
+    c.className = "crack " + side;
+    c.id = "crack-" + side;
+    document.body.appendChild(c);
+  });
+
+  document.getElementById("app").innerHTML =
+    `<p>Get your ass back and click the YES button 😌</p><button onclick="showValentine()">SORRY 😔</button>`;
+}
+
+function clearWarning() {
+  document.body.classList.remove("warning");
+  ["crack-left","crack-right"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+}
+
+function final() {
+  clearWarning();
+  document.getElementById("music").style.display = "block";
+  confetti({ particleCount: 200, spread: 120 });
+  document.getElementById("app").innerHTML =
+    `<h1>YOU SAVED YOUR LIFE 😌❤️</h1><p>Happy Valentine’s Day 💕</p>`;
+}
+</script>
+
+</body>
+</html>
